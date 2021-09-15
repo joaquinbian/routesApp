@@ -10,7 +10,7 @@ const StackNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="privilegies" component={PermissionsScreen} />
+      <Stack.Screen name="permissions" component={PermissionsScreen} />
       <Stack.Screen name="map" component={MapScreen} />
     </Stack.Navigator>
   );
