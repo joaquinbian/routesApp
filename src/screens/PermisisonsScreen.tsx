@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import {Button} from 'react-native-elements';
 import {
@@ -7,8 +7,10 @@ import {
   PermissionStatus,
   request,
 } from 'react-native-permissions';
+import {PermissionsContext} from '../context/permissionsContext';
 
 const PermissionsScreen = () => {
+  const {askPermissions, permissions} = useContext(PermissionsContext);
   const checkPermissions = async () => {
     let permissionStatus: PermissionStatus;
     if (Platform.OS === 'ios') {
@@ -23,6 +25,7 @@ const PermissionsScreen = () => {
         PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
     }
+    askPermissions();
     console.log({permissionStatus});
   };
 
@@ -30,6 +33,7 @@ const PermissionsScreen = () => {
     <View style={styles.container}>
       <Text>Soy la permissions screen</Text>
       <Button title="permissions" onPress={checkPermissions} />
+      <Text>{JSON.stringify(permissions, null, 5)}</Text>
     </View>
   );
 };
