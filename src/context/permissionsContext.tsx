@@ -2,6 +2,7 @@ import React, {createContext, useEffect, useState} from 'react';
 import {AppState, Platform} from 'react-native';
 import {
   check,
+  openSettings,
   PERMISSIONS,
   PermissionStatus,
   request,
@@ -55,6 +56,13 @@ const PermissionContextProvider = ({children}: ProviderProps) => {
       permissionsStatus = await request(
         PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
+    }
+    //si esta bloqueado, cuando apretemos aca no nos va a aparecer
+    //el prompt, debemos ir nosotros a setear desde las settings
+    //por eso si esta bloqueado con esta funcoin
+    //abrimos directamente las settings
+    if (permissionsStatus === 'blocked') {
+      openSettings();
     }
     setPermissions({...permissions, locationStatus: permissionsStatus});
   };
