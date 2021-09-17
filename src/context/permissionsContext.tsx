@@ -1,5 +1,5 @@
-import React, {createContext, useState} from 'react';
-import {Platform} from 'react-native';
+import React, {createContext, useEffect, useState} from 'react';
+import {AppState, Platform} from 'react-native';
 import {
   check,
   PERMISSIONS,
@@ -32,10 +32,35 @@ export const PermissionsContext = createContext({} as PermissionContextState);
 const PermissionContextProvider = ({children}: ProviderProps) => {
   const [permissions, setPermissions] = useState(permissionInitState);
 
-  //esta funcion lo que hace es fijarse en la app el estado del permiso
+  useEffect(() => {
+    //este listener escicha cuando la app esta activa o inactiva
+    //(si salimos o no de la app)
+    AppState.addEventListener('change', state => {
+      if (state === 'active') {
+        //cada vez que entremos a la app, va a ejecutar
+        //la funcion que checkea el status
+        checkPermissions();
+      }
+    });
+  }, []);
+
+  //esta funcion le pregunta al usuario si desea aceptar los permisos o no
   const askPermissions = async () => {
     console.log('entre al ask');
 
+    let permissionsStatus: PermissionStatus;
+    if (Platform.OS === 'ios') {
+      permissionsStatus = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+    } else {
+      permissionsStatus = await request(
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      );
+    }
+    setPermissions({...permissions, locationStatus: permissionsStatus});
+  };
+
+  //esta funcion lo que hace es fijarse en la app el estado del permiso
+  const checkPermissions = async () => {
     let permissionsStatus: PermissionStatus;
     if (Platform.OS === 'ios') {
       permissionsStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
@@ -43,16 +68,6 @@ const PermissionContextProvider = ({children}: ProviderProps) => {
       permissionsStatus = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
     }
     setPermissions({...permissions, locationStatus: permissionsStatus});
-  };
-
-  //esta funcion le pregunta al usuario si desea aceptar los permisos o no
-  const checkPermissions = async () => {
-    if (Platform.OS === 'ios') {
-      await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-    } else {
-      await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-    }
-    askPermissions();
   };
 
   const data: PermissionContextState = {
