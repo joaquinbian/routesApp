@@ -3,14 +3,10 @@ import {View, Text} from 'react-native';
 import MapView, {LatLng, PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 
 const Map = () => {
-  const [location, setLocation] = useState<LatLng>({
-    latitude: 0,
-    longitude: 0,
-  });
-
+  const [locations, setLocations] = useState<LatLng[]>([]);
   const setLocationMarker = (coordinate: LatLng) => {
     const {latitude, longitude} = coordinate;
-    setLocation({...location, longitude, latitude});
+    setLocations([...locations, {latitude, longitude}]);
   };
   return (
     <MapView
@@ -25,7 +21,9 @@ const Map = () => {
       onPress={({nativeEvent: {coordinate, position}}) =>
         setLocationMarker(coordinate)
       }>
-      <Marker coordinate={location} />
+      {locations.map((l, i) => (
+        <Marker coordinate={l} key={i} />
+      ))}
     </MapView>
   );
 };
