@@ -36,6 +36,7 @@ const PermissionContextProvider = ({children}: ProviderProps) => {
   useEffect(() => {
     //este listener escicha cuando la app esta activa o inactiva
     //(si salimos o no de la app)
+    checkPermissions();
     AppState.addEventListener('change', state => {
       if (state === 'active') {
         //cada vez que entremos a la app, va a ejecutar
