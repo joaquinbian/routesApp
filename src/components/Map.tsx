@@ -14,6 +14,7 @@ import LoadingSreen from '../screens/LoadingSreen';
 
 const Map = () => {
   const [locations, setLocations] = useState<LatLng[]>([]);
+  const [showPolyline, setShowPolyline] = useState<boolean>(true);
   const isFollowing = useRef<boolean>(true);
 
   const setLocationMarker = (coordinate: LatLng) => {
@@ -46,7 +47,7 @@ const Map = () => {
 
   useEffect(() => {
     //si no esta haciendo el seguimiento, que retorne
-    if (!isFollowing) return;
+    if (!isFollowing.current) return;
 
     //cadavez que cambie la location del usuario
     //ejecutamos esta animacion de la camra
@@ -87,7 +88,9 @@ const Map = () => {
         //es pq no queremos hacer el seguimiento de nuestra ubicacion
         //entonces lo setea en falso
         onTouchStart={() => (isFollowing.current = false)}>
-        <Polyline coordinates={routes} strokeColor="black" strokeWidth={3} />
+        {showPolyline && (
+          <Polyline coordinates={routes} strokeColor="black" strokeWidth={3} />
+        )}
         {locations.map((l, i) => (
           <Marker coordinate={l} key={i} />
         ))}
@@ -107,6 +110,22 @@ const Map = () => {
         }}
         icon={<Icon name="compass-outline" size={25} />}
         onPress={setCameraPosition}
+      />
+      <Button
+        containerStyle={{
+          position: 'absolute',
+          zIndex: 9999,
+          bottom: 80,
+          right: 20,
+        }}
+        buttonStyle={{
+          backgroundColor: 'rgba(255,255,255,.4)',
+          borderRadius: 50,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        icon={<Icon name="brush-outline" size={25} />}
+        onPress={() => setShowPolyline(!showPolyline)}
       />
     </>
   );

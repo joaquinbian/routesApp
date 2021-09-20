@@ -24,6 +24,12 @@ const useLocation = () => {
 
   useEffect(() => {
     isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+  useEffect(() => {
+    isMounted.current = true;
 
     if (isMounted.current) {
       //   Geolocation.getCurrentPosition(
@@ -41,9 +47,6 @@ const useLocation = () => {
         setHasLocation(true);
       });
     }
-    return () => {
-      isMounted.current = false;
-    };
   }, []);
 
   const getCurrentPosition = (): Promise<Location> => {
